@@ -3,32 +3,35 @@ import Container from "@/components/ui/Container";
 import SectionTitle from "@/components/ui/SectionTitle";
 import Button from "@/components/ui/Button";
 import Imagen from "@/public/imagen2.jpg"
+import vistaalmar from "@/public/vistaalmar.jpeg"
+import nolehace from "@/public/nolehace.jpeg"
+import otro from "@/public/otro.jpeg"
 
 
 const yates = [
   {
     id: "1",
-    name: "Sunset Voyager",
+    name: "No le hace",
     type: "Catamarán de Lujo",
-    capacity: 12,
-    duration: "4 horas",
+    capacity: 30,
+    duration: "1 horas",
     price: "$3,500 MXN",
     rating: 4.9,
     reviews: 128,
-    image: "https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=700&q=80",
-    features: ["Snorkel incluido", "Bebidas a bordo", "Guía experto", "Equipo de pesca"],
+    image: nolehace.src,
+    features: ["Snorkel incluido", "Ceviche a partir de 4 hr", "Hielera", "Equipo de pesca"],
   },
   {
     id: "2",
-    name: "Mar de Cortés Explorer",
+    name: "Vista al mar",
     type: "Velero Premium",
     capacity: 8,
     duration: "6 horas",
-    price: "$5,200 MXN",
+    price: "$1,500 MXN",
     rating: 5.0,
     reviews: 74,
-    image: "https://images.unsplash.com/photo-1548574505-5e239809ee19?w=700&q=80",
-    features: ["Tour privado", "Almuerzo gourmet", "Kayaks", "Paddle boards"],
+    image: vistaalmar.src,
+    features: ["Tour privado", "Hielera", "Kayaks", "Paddle boards"],
   },
   {
     id: "3",
@@ -36,11 +39,11 @@ const yates = [
     type: "Yate Privado",
     capacity: 16,
     duration: "Todo el día",
-    price: "$8,900 MXN",
+    price: "$1,800 MXN",
     rating: 4.8,
     reviews: 52,
-    image: "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=700&q=80",
-    features: ["Capitán privado", "Chef a bordo", "Equipo de buceo", "Pesca deportiva"],
+    image: otro.src,
+    features: ["Capitán privado", "Hielera", "Equipo de buceo", "Pesca deportiva"],
   },
 ];
 
@@ -141,7 +144,7 @@ export default function YatesPage() {
                       <span className="font-playfair text-xl text-[#0B1E2D] font-semibold">
                         {yate.price}
                       </span>
-                      <span className="text-xs text-[#0B1E2D]/40 ml-1">/ por persona</span>
+                      <span className="text-xs text-[#0B1E2D]/40 ml-1">/ por hora</span>
                     </div>
                     <Button size="sm" variant="primary">
                       Reservar
