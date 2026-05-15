@@ -73,8 +73,7 @@ export default function Hero() {
             className="font-karla font-bold text-6xl md:text-8xl lg:text-[9rem] text-[#D8C3A5] leading-none mb-4 tracking-tight"
             style={{ textShadow: "0 4px 40px rgba(0,0,0,0.5)" }}
           >
-            MAR
-                    Y VIDA
+            VIVE SAN CARLOS
           </motion.h1>
 
           {/* H2 */}
