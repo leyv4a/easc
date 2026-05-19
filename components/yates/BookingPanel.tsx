@@ -1,75 +1,84 @@
 "use client";
-import { useRef, useState } from "react";
-import { motion } from "framer-motion";
-import { MessageCircle, Users, Clock, Phone, MapPin, Calendar, ChevronRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import { MessageCircle, Users, Clock, Phone, Calendar, ChevronRight, Waves, Plus, Minus } from "lucide-react";
 import type { Yate } from "@/types/yate";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 
 interface BookingPanelProps {
   yate: Yate;
 }
 
-const HOUR_OPTIONS = [2, 3, 4, 6, 8];
+// const EXP_ICONS: Record<string, string> = {
+//   Privado: "🛥️",
+//   Sunset: "🌅",
+//   Pesca: "🎣",
+//   Snorkel: "🤿",
+//   Fiesta: "🎉",
+//   Romántico: "💫",
+// };
+const EXP_ICONS: Record<string, string> = {
+  Privado: "◆",
+  Sunset: "◆",
+  Pesca: "◆",
+  Snorkel: "◆",
+  Fiesta: "◆",
+  Romántico: "◆",
+};
 
-function formatDateES(dateStr: string): string {
-  if (!dateStr) return "";
-  const [year, month, day] = dateStr.split("-").map(Number);
-  const date = new Date(year, month - 1, day);
-  return date.toLocaleDateString("es-MX", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+// ◆
+// Genera slots de hora cada 30 min para las 24h
+function generateTimeSlots(): string[] {
+  const slots: string[] = [];
+  for (let h = 0; h < 24; h++) {
+    for (const m of [0, 30]) {
+      const hour12 = h % 12 === 0 ? 12 : h % 12;
+      const ampm = h < 12 ? "AM" : "PM";
+      const min = m === 0 ? "00" : "30";
+      slots.push(`${hour12}:${min} ${ampm}`);
+    }
+  }
+  return slots;
 }
 
-function getTodayString(): string {
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-}
+const TIME_SLOTS = generateTimeSlots();
 
 export default function BookingPanel({ yate }: BookingPanelProps) {
+  const [experience, setExperience] = useState<string>("");
+  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [calOpen, setCalOpen] = useState(false);
+  const [timeSlot, setTimeSlot] = useState<string>("");
   const [hours, setHours] = useState(Math.max(yate.durationHours, 2));
   const [people, setPeople] = useState(2);
-  const [date, setDate] = useState("");
 
-  // 1. Creamos la referencia para controlar el input
-  const inputRef = useRef<HTMLInputElement>(null);
+  const isPesca = experience === "Pesca";
+  const minHours = isPesca ? 6 : 2;
 
-  // 2. Función para forzar la apertura del calendario nativo
-  const handleContainerClick = () => {
-    if (inputRef.current) {
-      // showPicker() es el método estándar moderno de HTML5
-      try {
-        inputRef.current.showPicker();
-      } catch (error) {
-        // Selector de respaldo para navegadores antiguos
-        inputRef.current.focus();
-      }
-    }
-  };
+  // Ajusta horas si cambia la experiencia y queda por debajo del mínimo
+  useEffect(() => {
+    if (hours < minHours) setHours(minHours);
+  }, [minHours, hours]);
 
   const total = yate.price * hours;
-  const dateLabel = date ? formatDateES(date) : null;
-// 1. Creamos un array con las líneas del mensaje (filtrando las vacías)
-const messageLines = [
-  `Hola! Me interesa reservar el yate *${yate.name}* `,
-  "", // Esto genera un salto de línea doble
-  date ? `⊛ Fecha: ${dateLabel}` : null,
-  `⊛ Personas: ${people}`,
-  `⊛ Horas: ${hours}h`,
-  `⊛ Total estimado: $${total.toLocaleString("es-MX")} ${yate.currency}`,
-  "",
-  `¿Cuál es la disponibilidad?`
-].filter(Boolean); // Elimina el elemento de la fecha si es null
 
-// 2. Unimos las líneas con un salto de línea estándar y codificamos
-const waMessage = encodeURIComponent(messageLines.join("\n"));
+  const waMessage = encodeURIComponent(
+    `Hola! Me interesa reservar el *${yate.name}* \n\n` +
+    (experience ? `◆ Experiencia: ${experience} ${EXP_ICONS[experience] ?? ""}\n` : "") +
+    (date ? `◆ Fecha: ${format(date, "EEEE d 'de' MMMM yyyy", { locale: es })}\n` : "") +
+    (timeSlot ? `◆ Hora de salida: ${timeSlot}\n` : "") +
+    `◆ Personas: ${people}\n` +
+    `◆ Horas: ${hours}h\n` +
+    `◆ Total estimado: $${total.toLocaleString("es-MX")} ${yate.currency}\n\n` +
+    `¿Está disponible?`
+  );
+
 
   const waUrl = `https://wa.me/52${yate.whatsapp}?text=${waMessage}`;
-  const callUrl = `tel:${yate.phone}`;
 
   return (
     <motion.div
@@ -80,11 +89,11 @@ const waMessage = encodeURIComponent(messageLines.join("\n"));
     >
       <div className="bg-white rounded-[2rem] overflow-hidden shadow-2xl shadow-[#0B1E2D]/15 border border-[#D8C3A5]/20">
 
-        {/* ── Price header ── */}
-        <div className="relative bg-[#0B1E2D] px-7 pt-7 pb-8">
-          {/* subtle grid lines */}
-          <div className="absolute inset-0 opacity-[0.04]"
-            style={{ backgroundImage: "repeating-linear-gradient(90deg, #fff 0, #fff 1px, transparent 1px, transparent 40px), repeating-linear-gradient(#fff 0, #fff 1px, transparent 1px, transparent 40px)" }}
+        {/* ── Header precio ── */}
+        <div className="relative bg-[#0B1E2D] px-7 pt-7 pb-9">
+          <div
+            className="absolute inset-0 opacity-[0.035]"
+            style={{ backgroundImage: "repeating-linear-gradient(90deg,#fff 0,#fff 1px,transparent 1px,transparent 40px),repeating-linear-gradient(#fff 0,#fff 1px,transparent 1px,transparent 40px)" }}
           />
           <p className="relative text-[#00AEEF] text-[10px] tracking-[0.35em] uppercase font-semibold mb-2">
             Precio por hora
@@ -96,130 +105,192 @@ const waMessage = encodeURIComponent(messageLines.join("\n"));
             <span className="text-white/35 text-sm mb-1.5">{yate.currency}</span>
           </div>
           <p className="relative text-white/30 text-xs mt-2">
-            Capacidad máx. {yate.maxPeople} personas · Salida: {yate.departureLocation}
+            Máx. {yate.maxPeople} personas · {yate.departureLocation}
           </p>
-
-          {/* Decorative wave bottom */}
           <svg className="absolute -bottom-px left-0 right-0 w-full" viewBox="0 0 400 16" preserveAspectRatio="none">
             <path d="M0 16 Q100 0 200 8 Q300 16 400 4 L400 16 Z" fill="white" />
           </svg>
         </div>
 
-        {/* ── Selectors ── */}
-        <div className="px-7 pt-8 pb-7 space-y-6">
-{/* Date picker */}
-          <div>
-            <label className="flex items-center gap-2 text-[10px] text-[#0B1E2D]/40 font-bold uppercase tracking-[0.2em] mb-3">
-              <Calendar size={12} className="text-[#00AEEF]" />
+        {/* ── Campos ── */}
+        <div className="px-7 pt-8 pb-7 space-y-5">
+
+          {/* 1 · Tipo de experiencia */}
+          {yate.experienceType?.length > 0 && (
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2 text-[10px] text-[#0B1E2D]/40 font-bold uppercase tracking-[0.2em]">
+                <Waves size={11} className="text-[#00AEEF]" />
+                Experiencia
+                <span className="text-[#0B1E2D]/25 font-normal normal-case tracking-normal">· opcional</span>
+              </Label>
+              <Select value={experience} onValueChange={setExperience}>
+                <SelectTrigger>
+                  <SelectValue placeholder="— Cualquier experiencia —" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="cualquiera">— Cualquier experiencia —</SelectItem>
+                  {yate.experienceType.map((exp) => (
+                    <SelectItem key={exp} value={exp}>
+                      {EXP_ICONS[exp] ?? ""} {exp}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <AnimatePresence>
+                {isPesca && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200/60 text-emerald-700 text-xs px-3.5 py-2.5 rounded-xl mt-1">
+                      <span className="text-base">🎣</span>
+                      Pesca deportiva requiere mínimo <strong>6 horas</strong>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
+
+          {/* 2 · Fecha */}
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2 text-[10px] text-[#0B1E2D]/40 font-bold uppercase tracking-[0.2em]">
+              <Calendar size={11} className="text-[#00AEEF]" />
               Fecha deseada
-            </label>
-            
-            {/* Al hacer clic en este contenedor, se dispara el calendario */}
-            <div 
-              onClick={handleContainerClick}
-              className="relative h-[50px] w-full bg-[#F8F5F0] rounded-2xl border border-transparent hover:border-[#0B1E2D]/5 focus-within:border-[#00AEEF]/40 transition-all overflow-hidden cursor-pointer select-none"
-            >
-              
-              {/* CAPA VISUAL 1: Si NO hay fecha */}
-              {!date && (
-                <div className="absolute inset-0 flex items-center px-4 gap-3 pointer-events-none">
-                  <Calendar size={15} className="text-[#0B1E2D]/25" />
-                  <span className="text-[#0B1E2D]/35 text-sm">Selecciona una fecha</span>
-                </div>
-              )}
-              
-              {/* CAPA VISUAL 2: Si SÍ hay fecha (Tu formato personalizado) */}
-              {date && (
-                <div className="absolute inset-0 flex items-center px-4 gap-3 pointer-events-none">
-                  <Calendar size={15} className="text-[#00AEEF]" />
-                  <span className="text-[#0B1E2D] text-sm font-medium capitalize truncate pr-4">
-                    {dateLabel}
+            </Label>
+            <Popover open={calOpen} onOpenChange={setCalOpen}>
+              <PopoverTrigger asChild>
+                <button className="flex h-11 w-full items-center gap-3 rounded-2xl bg-[#F8F5F0] px-4 text-sm border border-transparent hover:border-[#D8C3A5]/60 focus:outline-none focus:ring-2 focus:ring-[#00AEEF]/40 transition-all text-left">
+                  <Calendar size={15} className={date ? "text-[#00AEEF]" : "text-[#0B1E2D]/25"} />
+                  <span className={date ? "text-[#0B1E2D] capitalize" : "text-[#0B1E2D]/35"}>
+                    {date
+                      ? format(date, "EEEE d 'de' MMMM", { locale: es })
+                      : "Selecciona una fecha"}
                   </span>
-                </div>
-              )}
-
-              {/* INPUT INVISIBLE (Oculto pero funcional mediante la Ref) */}
-              <input
-                ref={inputRef}
-                type="date"
-                min={getTodayString()}
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="absolute inset-0 w-full h-full opacity-0 pointer-events-none"
-                style={{ colorScheme: "light" }}
-              />
-            </div>
-          </div>
-
-          {/* Hours */}
-          <div>
-            <label className="flex items-center gap-2 text-[10px] text-[#0B1E2D]/40 font-bold uppercase tracking-[0.2em] mb-3">
-              <Clock size={12} className="text-[#00AEEF]" />
-              Horas de renta
-            </label>
-            <div className="grid grid-cols-5 gap-1.5">
-              {HOUR_OPTIONS.map((h) => (
-                <button
-                  key={h}
-                  onClick={() => setHours(h)}
-                  className={`py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                    hours === h
-                      ? "bg-[#0B1E2D] text-white shadow-lg"
-                      : "bg-[#F8F5F0] text-[#0B1E2D]/50 hover:bg-[#0B1E2D]/8 hover:text-[#0B1E2D]"
-                  }`}
-                >
-                  {h}h
                 </button>
-              ))}
-            </div>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <CalendarComponent
+                  selected={date}
+                  onSelect={(d: Date | undefined) => { if (d) { setDate(d); setCalOpen(false); } }}
+                  disabled={{ before: new Date() }}
+                />
+              </PopoverContent>
+            </Popover>
           </div>
 
-          {/* People */}
-          <div>
-            <label className="flex items-center gap-2 text-[10px] text-[#0B1E2D]/40 font-bold uppercase tracking-[0.2em] mb-3">
-              <Users size={12} className="text-[#00AEEF]" />
-              Personas <span className="text-[#0B1E2D]/25 font-normal">(máx. {yate.maxPeople})</span>
-            </label>
-            <div className="flex items-center bg-[#F8F5F0] rounded-2xl overflow-hidden">
+          {/* 3 · Hora de salida */}
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2 text-[10px] text-[#0B1E2D]/40 font-bold uppercase tracking-[0.2em]">
+              <Clock size={11} className="text-[#00AEEF]" />
+              Hora de salida
+            </Label>
+            <Select value={timeSlot} onValueChange={setTimeSlot}>
+              <SelectTrigger>
+                <SelectValue placeholder="— Selecciona una hora —" />
+              </SelectTrigger>
+              <SelectContent>
+                {TIME_SLOTS.map((t) => (
+                  <SelectItem key={t} value={t}>{t}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* 4 · Horas de renta */}
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2 text-[10px] text-[#0B1E2D]/40 font-bold uppercase tracking-[0.2em]">
+              <Clock size={11} className="text-[#00AEEF]" />
+              Horas de renta
+              {isPesca
+                ? <span className="text-emerald-600 font-normal normal-case tracking-normal">· mín. 6h</span>
+                : <span className="text-[#0B1E2D]/25 font-normal normal-case tracking-normal">· mín. 2h</span>
+              }
+            </Label>
+            <div className="flex items-center bg-[#F8F5F0] rounded-2xl overflow-hidden h-11">
               <button
-                onClick={() => setPeople((p) => Math.max(1, p - 1))}
-                className="w-12 h-12 flex items-center justify-center text-[#0B1E2D]/50 hover:text-[#0B1E2D] hover:bg-[#0B1E2D]/5 transition-colors text-xl font-light"
+                onClick={() => setHours((h) => Math.max(minHours, h - 1))}
+                disabled={hours <= minHours}
+                className="w-12 h-full flex items-center justify-center text-[#0B1E2D]/40 hover:text-[#0B1E2D] hover:bg-[#0B1E2D]/5 transition-colors disabled:opacity-25 disabled:cursor-not-allowed"
               >
-                −
+                <Minus size={16} />
               </button>
               <div className="flex-1 text-center">
-                <span className="text-[#0B1E2D] font-bold text-xl">{people}</span>
-                <span className="text-[#0B1E2D]/30 text-xs ml-1">
+                <span className="text-[#0B1E2D] font-bold text-lg">{hours}</span>
+                <span className="text-[#0B1E2D]/35 text-xs ml-1.5">
+                  {hours === 1 ? "hora" : "horas"}
+                </span>
+              </div>
+              <button
+                onClick={() => setHours((h) => h + 1)}
+                className="w-12 h-full flex items-center justify-center text-[#0B1E2D]/40 hover:text-[#0B1E2D] hover:bg-[#0B1E2D]/5 transition-colors"
+              >
+                <Plus size={16} />
+              </button>
+            </div>
+          </div>
+
+          {/* 5 · Personas */}
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2 text-[10px] text-[#0B1E2D]/40 font-bold uppercase tracking-[0.2em]">
+              <Users size={11} className="text-[#00AEEF]" />
+              Personas
+              <span className="text-[#0B1E2D]/25 font-normal normal-case tracking-normal">(máx. {yate.maxPeople})</span>
+            </Label>
+            <div className="flex items-center bg-[#F8F5F0] rounded-2xl overflow-hidden h-11">
+              <button
+                onClick={() => setPeople((p) => Math.max(1, p - 1))}
+                disabled={people <= 1}
+                className="w-12 h-full flex items-center justify-center text-[#0B1E2D]/40 hover:text-[#0B1E2D] hover:bg-[#0B1E2D]/5 transition-colors disabled:opacity-25 disabled:cursor-not-allowed"
+              >
+                <Minus size={16} />
+              </button>
+              <div className="flex-1 text-center">
+                <span className="text-[#0B1E2D] font-bold text-lg">{people}</span>
+                <span className="text-[#0B1E2D]/35 text-xs ml-1.5">
                   {people === 1 ? "persona" : "personas"}
                 </span>
               </div>
               <button
                 onClick={() => setPeople((p) => Math.min(yate.maxPeople, p + 1))}
-                className="w-12 h-12 flex items-center justify-center text-[#0B1E2D]/50 hover:text-[#0B1E2D] hover:bg-[#0B1E2D]/5 transition-colors text-xl font-light"
+                disabled={people >= yate.maxPeople}
+                className="w-12 h-full flex items-center justify-center text-[#0B1E2D]/40 hover:text-[#0B1E2D] hover:bg-[#0B1E2D]/5 transition-colors disabled:opacity-25 disabled:cursor-not-allowed"
               >
-                +
+                <Plus size={16} />
               </button>
             </div>
           </div>
 
-          {/* Divider + total */}
-          <div className="bg-gradient-to-r from-[#F8F5F0] via-[#D8C3A5]/30 to-[#F8F5F0] rounded-2xl px-5 py-4 flex items-center justify-between">
+          {/* ── Total ── */}
+          <div className="bg-gradient-to-br from-[#F8F5F0] to-[#D8C3A5]/20 rounded-2xl px-5 py-4 flex items-center justify-between border border-[#D8C3A5]/30">
             <div>
-              <p className="text-[#0B1E2D]/40 text-xs mb-0.5">Total estimado</p>
-              <p className="text-[#0B1E2D]/50 text-[11px]">
-                {hours}h · {people} {people === 1 ? "persona" : "personas"}
-                {date && ` · ${new Date(date + "T12:00:00").toLocaleDateString("es-MX", { day: "numeric", month: "short" })}`}
-              </p>
+              <p className="text-[#0B1E2D]/40 text-xs mb-1">Total estimado</p>
+              <div className="text-[#0B1E2D]/45 text-[11px] leading-relaxed space-y-0.5">
+                <p>{hours}h · {people} {people === 1 ? "persona" : "personas"}</p>
+                {(date || timeSlot) && (
+                  <p>
+                    {date && format(date, "d MMM", { locale: es })}
+                    {date && timeSlot && " · "}
+                    {timeSlot}
+                  </p>
+                )}
+                {experience && experience !== "cualquiera" && (
+                  <p>{EXP_ICONS[experience]} {experience}</p>
+                )}
+              </div>
             </div>
             <div className="text-right">
-              <p className="font-playfair text-[1.85rem] leading-none text-[#0B1E2D]">
+              <p className="font-playfair text-[1.9rem] leading-none text-[#0B1E2D]">
                 ${total.toLocaleString("es-MX")}
               </p>
               <p className="text-[#0B1E2D]/30 text-[10px] mt-0.5">{yate.currency}</p>
             </div>
           </div>
 
-          {/* WhatsApp CTA */}
+          {/* ── WhatsApp CTA ── */}
           <a
             href={waUrl}
             target="_blank"
@@ -227,29 +298,32 @@ const waMessage = encodeURIComponent(messageLines.join("\n"));
             className="group flex items-center justify-between w-full bg-[#25D366] text-white font-semibold py-4 px-6 rounded-2xl hover:bg-[#1ebe5d] transition-all shadow-xl shadow-[#25D366]/25 hover:shadow-[#25D366]/40 hover:-translate-y-0.5 active:translate-y-0"
           >
             <div className="flex items-center gap-3">
-              <MessageCircle size={21} className="fill-white" />
+              <MessageCircle size={21} className="fill-white shrink-0" />
               <div className="text-left">
                 <p className="text-sm font-bold leading-none">Reservar por WhatsApp</p>
-                <p className="text-white/70 text-[10px] mt-1">
-                  {date ? `Para el ${new Date(date + "T12:00:00").toLocaleDateString("es-MX", { day: "numeric", month: "short" })}` : "Consultar disponibilidad"}
+                <p className="text-white/65 text-[10px] mt-1">
+                  {date
+                    ? `${format(date, "d MMM", { locale: es })}${timeSlot ? ` · ${timeSlot}` : ""}`
+                    : "Consultar disponibilidad"}
                 </p>
               </div>
             </div>
-            <ChevronRight size={18} className="opacity-60 group-hover:translate-x-0.5 transition-transform" />
+            <ChevronRight size={18} className="opacity-50 group-hover:translate-x-0.5 transition-transform shrink-0" />
           </a>
 
-          {/* Call */}
+          {/* ── Llamar ── */}
           <a
-            href={callUrl}
-            className="flex items-center justify-center gap-2.5 w-full border border-[#0B1E2D]/12 text-[#0B1E2D]/60 hover:text-[#0B1E2D] hover:border-[#0B1E2D]/25 font-medium py-3 rounded-2xl transition-all text-sm"
+            href={`tel:${yate.phone}`}
+            className="flex items-center justify-center gap-2 w-full border border-[#0B1E2D]/10 text-[#0B1E2D]/50 hover:text-[#0B1E2D] hover:border-[#0B1E2D]/25 font-medium py-3 rounded-2xl transition-all text-sm"
           >
-            <Phone size={15} />
+            <Phone size={14} />
             {yate.phone}
           </a>
 
           {yate.contactName && (
-            <p className="text-center text-[#0B1E2D]/30 text-[11px] -mt-2">
-              Atendido por <span className="text-[#0B1E2D]/50 font-medium">{yate.contactName}</span>
+            <p className="text-center text-[#0B1E2D]/25 text-[11px] -mt-2">
+              Atendido por{" "}
+              <span className="text-[#0B1E2D]/45 font-medium">{yate.contactName}</span>
             </p>
           )}
         </div>
