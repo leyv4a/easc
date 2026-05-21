@@ -49,11 +49,11 @@ export default function TourContactPanel({ tour }: TourContactPanelProps) {
   }, []);
 
   const waMessage = encodeURIComponent(
-    `Hola! Me interesa el tour *${tour.name}* 🏔️\n\n` +
-    (date ? `📅 Fecha: ${format(date, "EEEE d 'de' MMMM yyyy", { locale: es })}\n` : "") +
-    (timeSlot ? `🕐 Hora: ${timeSlot}\n` : "") +
+    `Hola! Me interesa el tour *${tour.name}* ◆\n\n` +
+    (date ? `◆" Fecha: ${format(date, "EEEE d 'de' MMMM yyyy", { locale: es })}\n` : "") +
+    (timeSlot ? `◆" Hora: ${timeSlot}\n` : "") +
     `👥 Personas: ${people}\n` +
-    (total ? `💰 Total estimado: $${total.toLocaleString("es-MX")} ${tour.currency}\n` : "") +
+    (total ? `◆" Total estimado: $${total.toLocaleString("es-MX")} ${tour.currency}\n` : "") +
     `\n¿Cuál es la disponibilidad?`
   );
 
