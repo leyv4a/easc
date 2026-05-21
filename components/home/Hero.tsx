@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Anchor, UtensilsCrossed, BedDouble, Mountain, Landmark, Music, ChevronDown } from "lucide-react";
+import { Anchor, UtensilsCrossed, BedDouble, Mountain, Landmark, Music, ChevronDown, Map } from "lucide-react";
 import { categories } from "@/data/categories";
 import Modal from "@/components/ui/Modal";
 import Link from "next/link";
@@ -14,6 +14,7 @@ const iconMap: Record<string, React.ReactNode> = {
   Mountain: <Mountain size={18} />,
   Landmark: <Landmark size={18} />,
   Music: <Music size={18} />,
+    Map: <Map size={18} />,
 };
 
 export default function Hero() {

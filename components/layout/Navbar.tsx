@@ -10,6 +10,7 @@ const navLinks = [
   { label: "Yates", href: "/yates" },
   { label: "Cultura", href: "/cultura" },
   { label: "Contacto", href: "/contacto" },
+  { label: "Tours", href: "/tours" },
 ];
 
 export default function Navbar() {

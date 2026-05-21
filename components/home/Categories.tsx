@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Anchor, UtensilsCrossed, BedDouble, Mountain, Landmark, Music } from "lucide-react";
+import { Anchor, UtensilsCrossed, BedDouble, Mountain, Landmark, Music,Map } from "lucide-react";
 import { categories } from "@/data/categories";
 import Modal from "@/components/ui/Modal";
 import Container from "@/components/ui/Container";
@@ -14,6 +14,7 @@ const iconMap: Record<string, React.ComponentType<{ size?: number; className?: s
   Mountain,
   Landmark,
   Music,
+  Map,
 };
 
 const colorMap: Record<string, string> = {
