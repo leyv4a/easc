@@ -66,10 +66,10 @@ export default function Navbar() {
               </Link>
             ))}
             <Link
-              href="/yates"
+              href="/colaborar"
               className="bg-[#00AEEF] text-white text-sm font-medium px-5 py-2.5 rounded-full hover:bg-[#0090c7] transition-colors shadow-lg shadow-[#00AEEF]/20"
             >
-              Reservar
+              Colaborar
             </Link>
           </div>
 
