@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   category: "travel",
 
   alternates: {
-    canonical: "/",
+    canonical: siteUrl,
   },
 
   openGraph: {
@@ -47,13 +47,15 @@ export const metadata: Metadata = {
     locale: "es_MX",
     url: siteUrl,
     siteName: "Escápate a San Carlos",
+
     title: "Escápate a San Carlos | Turismo en San Carlos, Sonora",
+
     description:
       "Explora playas, yates, gastronomía, pesca, senderismo y experiencias inolvidables en San Carlos, Sonora.",
 
     images: [
       {
-        url: "https://api.notimagen.mx/api/files/pbc_2387761742/hnk3bj309oaq9rn/chat_gpt_image_may_23_2026_03_30_06_pm_t0xno03rq8.png",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "Escápate a San Carlos",
@@ -63,10 +65,13 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
+
     title: "Escápate a San Carlos | Turismo en San Carlos",
+
     description:
       "Descubre las mejores experiencias, playas, yates y aventuras en San Carlos, Sonora.",
-    images: ["https://api.notimagen.mx/api/files/pbc_2387761742/hnk3bj309oaq9rn/chat_gpt_image_may_23_2026_03_30_06_pm_t0xno03rq8.png"],
+
+    images: ["/og-image.png"],
   },
 
   robots: {
@@ -86,10 +91,6 @@ export const metadata: Metadata = {
     icon: "/favicon.ico",
     shortcut: "/favicon-32x32.png",
     apple: "/apple-touch-icon.png",
-  },
-
-  verification: {
-    google: "AQUI_TU_GOOGLE_SITE_VERIFICATION",
   },
 };
 
