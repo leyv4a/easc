@@ -53,7 +53,7 @@ export default async function TourDetailPage({ params }: PageProps) {
         <div className="absolute inset-0 bg-gradient-to-r from-[#0B1E2D]/50 via-transparent to-transparent" />
 
         {/* Back nav */}
-        <div className="absolute top-0 left-0 right-0 pt-24 pb-6 z-10">
+        <div className="absolute top-0 left-0 right-0 pt-36 pb-6 z-10">
           <Container>
             <Link
               href="/tours"

@@ -84,7 +84,7 @@ export default async function HospedajeDetailPage({ params }: PageProps) {
   const distancia = hospedaje.details?.distanceToBeachMeters;
 
   return (
-    <main className="bg-[#F4F1EC] min-h-screen">
+    <main className="bg-[#F4F1EC] min-h-screen ">
 
       {/* ── HERO ── */}
       <section className="relative h-[88vh] min-h-[580px] max-h-[820px] overflow-hidden">
@@ -96,7 +96,7 @@ export default async function HospedajeDetailPage({ params }: PageProps) {
         <div className="absolute inset-0 bg-gradient-to-r from-[#0B1E2D]/50 via-transparent to-transparent" />
 
         {/* Back nav */}
-        <div className="absolute top-0 left-0 right-0 pt-24 pb-6 z-10">
+        <div className="absolute top-0 left-0 right-0 pt-36 pb-6 z-10">
           <Container>
             <Link
               href="/hospedaje"
