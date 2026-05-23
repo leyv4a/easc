@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     "San Carlos México",
   ],
 
-  authors: [{ name: "Escápate a San Carlos" }],
+  authors: [{ name: "Gabriel Leyva Esquivel" }],
   creator: "Escápate a San Carlos",
   publisher: "Escápate a San Carlos",
 
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
 
     images: [
       {
-        url: "/og-image.png",
+        url: "/og-image.jpg",
         width: 1200,
         height: 675,
         alt: "Escápate a San Carlos",
@@ -71,7 +71,7 @@ export const metadata: Metadata = {
     description:
       "Descubre las mejores experiencias, playas, yates y aventuras en San Carlos, Sonora.",
 
-    images: ["/og-image.png"],
+    images: ["/og-image.jpg"],
   },
 
   robots: {
