@@ -4,28 +4,59 @@ import Container from "@/components/ui/Container";
 import { Phone, Mail, MapPin, Clock, MessageCircle, Handshake } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Colaborar · San Carlos Sonora",
-  description: "¿Tienes un negocio en San Carlos? Únete a nuestra plataforma turística y llega a más visitantes.",
+  title: "Colabora con Escápate a San Carlos",
+
+  description:
+    "Promociona tu negocio turístico en San Carlos y llega a más visitantes.",
+
+  openGraph: {
+    title: "Colabora con Escápate a San Carlos",
+
+    description:
+      "Únete a la guía turística de San Carlos y promociona tu negocio.",
+
+    url: "https://escapateasancarlos.com/colaborar",
+
+    images: [
+      {
+        url: "/og-colaborar.png",
+        width: 1200,
+        height: 630,
+        alt: "Colabora con Escápate a San Carlos",
+      },
+    ],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+
+    title: "Colabora con Escápate a San Carlos",
+
+    description:
+      "Promociona tu negocio turístico y llega a más visitantes.",
+
+    images: ["/og-colaborar.png"],
+  },
 };
 
 const CONTACT_INFO = [
   {
     icon: Phone,
     label: "Teléfono",
-    value: "+52 622 XXX XXXX",
-    href: "tel:+52622XXXXXXX",
+    value: "+52 656 332 8814",
+    href: "tel:+526563328814",
   },
   {
     icon: MessageCircle,
     label: "WhatsApp",
-    value: "+52 622 XXX XXXX",
-    href: "https://wa.me/52622XXXXXXX",
+    value: "+52 622 144 9886",
+    href: "https://wa.me/526221449886",
   },
   {
     icon: Mail,
     label: "Correo",
-    value: "hola@sancarlos.mx",
-    href: "mailto:hola@sancarlos.mx",
+    value: "gleyvaesquivel@gmail.com",
+    href: "mailto:gleyvaesquivel@gmail.com",
   },
   {
     icon: MapPin,
@@ -70,7 +101,7 @@ export default function ColaborarPage() {
             </div>
             <h1 className="font-playfair text-5xl md:text-7xl text-white leading-none mb-6">
               Colabora con<br />
-              <span className="italic text-[#00AEEF]">San Carlos</span>
+              <span className="italic text-[#00AEEF]">nosotros</span>
             </h1>
             <p className="text-white/55 text-lg leading-relaxed max-w-xl">
               ¿Tienes un yate, tour, hospedaje u otro negocio turístico en San Carlos?
