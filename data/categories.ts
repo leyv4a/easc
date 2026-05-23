@@ -9,8 +9,8 @@ export interface Category {
 export const categories: Category[] = [
   { id: "yates",         label: "Yates",        icon: "Anchor",          active: true,  href: "/yates" },
   { id: "tours",         label: "Tours",         icon: "Map",             active: true,  href: "/tours" },
+  { id: "hospedaje",     label: "Hospedaje",     icon: "BedDouble",       active: true,  href: "/hospedaje" },
   { id: "restaurantes",  label: "Restaurantes",  icon: "UtensilsCrossed", active: false },
-  { id: "hospedaje",     label: "Hospedaje",     icon: "BedDouble",       active: false },
   { id: "aventuras",     label: "Aventuras",     icon: "Mountain",        active: false },
   { id: "cultura",       label: "Cultura",       icon: "Landmark",        active: false },
   { id: "vida-nocturna", label: "Vida Nocturna", icon: "Music",           active: false },

@@ -14,7 +14,7 @@ const iconMap: Record<string, React.ReactNode> = {
   Mountain: <Mountain size={18} />,
   Landmark: <Landmark size={18} />,
   Music: <Music size={18} />,
-    Map: <Map size={18} />,
+  Map: <Map size={18} />,
 };
 
 export default function Hero() {

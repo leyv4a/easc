@@ -8,9 +8,10 @@ import Image from "next/image";
 const navLinks = [
   // { label: "Inicio", href: "/" },
   { label: "Yates", href: "/yates" },
+  { label: "Tours", href: "/tours" },
+  { label: "Hospedaje", href: "/hospedaje" },
   { label: "Cultura", href: "/cultura" },
   { label: "Contacto", href: "/contacto" },
-  { label: "Tours", href: "/tours" },
 ];
 
 export default function Navbar() {

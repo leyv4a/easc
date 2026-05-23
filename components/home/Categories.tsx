@@ -8,13 +8,13 @@ import Container from "@/components/ui/Container";
 import Link from "next/link";
 
 const iconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
-  Anchor,
-  UtensilsCrossed,
-  BedDouble,
-  Mountain,
-  Landmark,
-  Music,
-  Map,
+ Anchor,
+ UtensilsCrossed,
+ BedDouble,
+ Mountain,
+ Landmark,
+ Music,
+ Map,
 };
 
 const colorMap: Record<string, string> = {
