@@ -73,7 +73,6 @@ export const metadata: Metadata = {
 
     images: ["/og-image.jpg"],
   },
-
   robots: {
     index: true,
     follow: true,
@@ -86,7 +85,6 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon-32x32.png",
