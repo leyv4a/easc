@@ -59,17 +59,33 @@ export async function generateStaticParams() {
   const hospedajes = await fetchHospedajes();
   return hospedajes.map((h) => ({ slug: h.slug }));
 }
-
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const hospedaje = await fetchHospedajeBySlug(slug);
   if (!hospedaje) return { title: "Hospedaje no encontrado" };
+
+  const imageUrl = hospedaje.coverImage
+    ? getHospedajeImageUrl(hospedaje.collectionId, hospedaje.id, hospedaje.coverImage)
+    : null;
+
   return {
     title: hospedaje.seoTitle || `${hospedaje.name} · San Carlos`,
     description: hospedaje.seoDescription || hospedaje.shortDescription,
+    openGraph: {
+      title: hospedaje.seoTitle || hospedaje.name,
+      description: hospedaje.seoDescription || hospedaje.shortDescription,
+      images: imageUrl ? [{ url: imageUrl, width: 1200, height: 630, alt: hospedaje.name }] : [],
+      type: "website",
+      locale: "es_MX",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: hospedaje.seoTitle || hospedaje.name,
+      description: hospedaje.seoDescription || hospedaje.shortDescription,
+      images: imageUrl ? [imageUrl] : [],
+    },
   };
 }
-
 export default async function HospedajeDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const hospedaje = await fetchHospedajeBySlug(slug);
