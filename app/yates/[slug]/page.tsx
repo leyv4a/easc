@@ -21,9 +21,25 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const yate = await fetchYateBySlug(slug);
   if (!yate) return { title: "Yate no encontrado" };
+
+  const imageUrl = yate.coverImage
+    ? getImageUrl(yate.collectionId, yate.id, yate.coverImage)
+    : null;
+
   return {
     title: yate.seoTitle || yate.name,
     description: yate.seoDescription || yate.shortDescription,
+    openGraph: {
+      title: yate.seoTitle || yate.name,
+      description: yate.seoDescription || yate.shortDescription,
+      images: imageUrl ? [{ url: imageUrl, width: 1200, height: 630, alt: yate.name }] : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: yate.seoTitle || yate.name,
+      description: yate.seoDescription || yate.shortDescription,
+      images: imageUrl ? [imageUrl] : [],
+    },
   };
 }
 
