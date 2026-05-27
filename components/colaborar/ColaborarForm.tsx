@@ -42,24 +42,40 @@ export default function ColaborarForm() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => setForm((prev) => ({ ...prev, [key]: e.target.value }));
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  try {
     setLoading(true);
 
-    // Simula latencia de red
-    await new Promise((r) => setTimeout(r, 600));
-
-    console.log("📋 Nuevo contacto de colaboración:", {
-      ...form,
-      timestamp: new Date().toISOString(),
+    const response = await fetch("/api/colaborar", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(form),
     });
 
-    setLoading(false);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Error enviando formulario");
+    }
+
     setSent(true);
     setForm(EMPTY);
 
-    setTimeout(() => setSent(false), 5000);
-  };
+    setTimeout(() => {
+      setSent(false);
+    }, 5000);
+  } catch (error) {
+    console.error(error);
+
+    alert("Hubo un error enviando el formulario.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const inputClass =
     "w-full bg-white border border-[#D8C3A5]/40 rounded-2xl px-4 py-3.5 text-sm text-[#0B1E2D] placeholder:text-[#0B1E2D]/30 focus:outline-none focus:border-[#00AEEF]/50 focus:ring-2 focus:ring-[#00AEEF]/10 transition-all";

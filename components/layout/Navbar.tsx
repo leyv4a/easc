@@ -12,6 +12,16 @@ const navLinks = [
   { label: "Hospedaje", href: "/hospedaje" },
   { label: "Cultura", href: "/cultura" },
   { label: "Contacto", href: "/contacto" },
+  // { label: "Colaborar", href: "/colaborar" },
+];
+const navLinks2 = [
+  // { label: "Inicio", href: "/" },
+  { label: "Yates", href: "/yates" },
+  { label: "Tours", href: "/tours" },
+  { label: "Hospedaje", href: "/hospedaje" },
+  { label: "Cultura", href: "/cultura" },
+  { label: "Contacto", href: "/contacto" },
+  { label: "Colaborar", href: "/colaborar" },
 ];
 
 export default function Navbar() {
@@ -94,7 +104,7 @@ export default function Navbar() {
             exit={{ opacity: 0, scale: 0.97 }}
             transition={{ duration: 0.25 }}
           >
-            {navLinks.map((link, i) => (
+            {navLinks2.map((link, i) => (
               <motion.div
                 key={link.href}
                 initial={{ opacity: 0, y: 20 }}
@@ -108,8 +118,10 @@ export default function Navbar() {
                 >
                   {link.label}
                 </Link>
+              
               </motion.div>
             ))}
+      
           </motion.div>
         )}
       </AnimatePresence>

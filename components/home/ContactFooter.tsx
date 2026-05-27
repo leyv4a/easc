@@ -6,21 +6,65 @@ import Container from "@/components/ui/Container";
 
 export default function ContactFooter() {
   const [sent, setSent] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [form, setForm] = useState({
+    nombre: "",
+    email: "",
+    mensaje: "",
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSent(true);
-    setTimeout(() => setSent(false), 4000);
-    setForm({ name: "", email: "", message: "" });
+
+    try {
+      setLoading(true);
+
+      const response = await fetch("/api/contacto", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nombre: form.nombre,
+          email: form.email,
+          mensaje: form.mensaje,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Error enviando mensaje");
+      }
+
+      setSent(true);
+
+      setForm({
+        nombre: "",
+        email: "",
+        mensaje: "",
+      });
+
+      setTimeout(() => {
+        setSent(false);
+      }, 4000);
+    } catch (error) {
+      console.error(error);
+      alert("Hubo un error enviando el mensaje.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <section className="py-24 bg-[#0B1E2D] relative overflow-hidden">
       {/* Background decoration */}
-      <div className="absolute inset-0 opacity-5"
+      <div
+        className="absolute inset-0 pointer-events-none opacity-10"
         style={{
-          backgroundImage: "radial-gradient(circle at 20% 50%, #00AEEF 0%, transparent 50%), radial-gradient(circle at 80% 50%, #D8C3A5 0%, transparent 50%)"
+          backgroundImage:
+            "radial-gradient(circle at 20% 50%, #00AEEF 0%, transparent 50%), radial-gradient(circle at 80% 50%, #D8C3A5 0%, transparent 50%)",
         }}
       />
 
@@ -38,7 +82,8 @@ export default function ContactFooter() {
               ¿Listo para tu próxima aventura?
             </h2>
             <p className="text-white/50 text-base mb-12 max-w-md mx-auto">
-              Escríbenos y te ayudamos a planear la experiencia perfecta en San Carlos.
+              Escríbenos y te ayudamos a planear la experiencia perfecta en San
+              Carlos.
             </p>
           </motion.div>
 
@@ -55,9 +100,9 @@ export default function ContactFooter() {
                 type="text"
                 placeholder="Tu nombre"
                 required
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#00AEEF]/50 focus:bg-white/8 transition-all"
+                value={form.nombre}
+                onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+                className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#00AEEF]/50 focus:bg-white/8 transition-all cursor-text"
               />
               <input
                 type="email"
@@ -72,13 +117,14 @@ export default function ContactFooter() {
               placeholder="Cuéntanos qué experiencia buscas..."
               rows={5}
               required
-              value={form.message}
-              onChange={(e) => setForm({ ...form, message: e.target.value })}
+              value={form.mensaje}
+              onChange={(e) => setForm({ ...form, mensaje: e.target.value })}
               className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#00AEEF]/50 transition-all resize-none"
             />
 
             <button
               type="submit"
+              disabled={loading || sent}
               className={`w-full flex items-center justify-center gap-3 py-4 rounded-2xl font-medium text-sm transition-all duration-300 ${
                 sent
                   ? "bg-green-500/20 border border-green-400/30 text-green-400"
@@ -89,6 +135,29 @@ export default function ContactFooter() {
                 <>
                   <CheckCircle size={18} />
                   Mensaje enviado — ¡Gracias!
+                </>
+              ) : loading ? (
+                <>
+                  <svg
+                    className="animate-spin h-4 w-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8z"
+                    />
+                  </svg>
+                  Enviando...
                 </>
               ) : (
                 <>
