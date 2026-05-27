@@ -5,6 +5,42 @@ import SectionTitle from "@/components/ui/SectionTitle";
 import YateCard from "@/components/yates/YateCard";
 import YatesLoader from "@/components/yates/YatesLoader";
 import { fetchYates } from "@/lib/api";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Renta de Yates en San Carlos, Sonora | Escápate a San Carlos",
+  description:
+    "Descubre los mejores yates en San Carlos, Sonora. Renta embarcaciones premium para paseos privados, pesca, fiestas y experiencias de lujo en el Mar de Cortés.",
+  keywords: [
+    "yates san carlos",
+    "renta de yates san carlos",
+    "yates en san carlos sonora",
+    "yacht rental san carlos",
+    "charter san carlos sonora",
+    "paseos en yate san carlos",
+    "mar de cortes yates",
+  ],
+  openGraph: {
+    title: "Renta de Yates en San Carlos, Sonora",
+    description:
+      "Explora y reserva los mejores yates en San Carlos para vivir experiencias únicas en el Mar de Cortés.",
+    url: "https://escapateasancarlos.com/yates",
+    siteName: "Escápate a San Carlos",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=1800&q=85",
+        width: 1800,
+        height: 1200,
+        alt: "Yates en San Carlos Sonora",
+      },
+    ],
+    locale: "es_MX",
+    type: "website",
+  },
+  alternates: {
+    canonical: "https://escapateasancarlos.com/yates",
+  },
+};
 
 async function YatesList() {
   const yates = await fetchYates();

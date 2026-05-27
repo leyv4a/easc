@@ -19,14 +19,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
 
     {
-      url: `${baseUrl}/que-comer`,
+      url: `${baseUrl}/hospedaje`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.9,
     },
 
     {
-      url: `${baseUrl}/directorio`,
+      url: `${baseUrl}/tours`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.8,
