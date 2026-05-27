@@ -29,6 +29,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: yate.seoTitle || yate.name,
     description: yate.seoDescription || yate.shortDescription,
+    alternates: {
+    canonical: `https://escapateasancarlos.com/yates/${yate.slug}`,
+  },
     openGraph: {
       title: yate.seoTitle || yate.name,
       description: yate.seoDescription || yate.shortDescription,
