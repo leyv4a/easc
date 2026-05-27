@@ -12,7 +12,7 @@ const CATEGORY_ROUTES: Record<string, string> = {
   [HOSPEDAJE_CATEGORY_ID]: "/hospedaje",
 };
 
-function getHref(item: FeaturedItem): string {
+function getHref(item: Omit<FeaturedItem, "href">): string {
   const base = CATEGORY_ROUTES[item.category] ?? "/";
   return `${base}/${item.slug}`;
 }

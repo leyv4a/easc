@@ -22,6 +22,8 @@ interface FeaturedApiResponse {
   totalPages: number;
 }
 
+
+
 export async function fetchYates(): Promise<Yate[]> {
   try {
     const url = `${API_BASE}/collections/easc_businesses/records?filter=(category='${YATE_CATEGORY_ID}')&sort=-featured,-created&perPage=50`;
