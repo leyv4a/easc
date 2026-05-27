@@ -2,6 +2,26 @@ import { API_BASE, YATE_CATEGORY_ID, type ApiResponse, type Yate } from "@/types
 import { TOUR_CATEGORY_ID, type Tour, type ToursApiResponse } from "@/types/tour";
 import { HOSPEDAJE_CATEGORY_ID, type Hospedaje, type HospedajeApiResponse } from "@/types/hospedaje";
 
+export interface FeaturedItem {
+  id: string;
+  name: string;
+  slug: string;
+  shortDescription: string;
+  coverImage: string;
+  collectionId: string;
+  category: string;
+  badge: string;
+  href: string;
+}
+
+interface FeaturedApiResponse {
+  items: Omit<FeaturedItem, "href">[];
+  page: number;
+  perPage: number;
+  totalItems: number;
+  totalPages: number;
+}
+
 export async function fetchYates(): Promise<Yate[]> {
   try {
     const url = `${API_BASE}/collections/easc_businesses/records?filter=(category='${YATE_CATEGORY_ID}')&sort=-featured,-created&perPage=50`;
@@ -77,5 +97,33 @@ export async function fetchHospedajeBySlug(slug: string): Promise<Hospedaje | nu
   } catch (err) {
     console.error("fetchHospedajeBySlug error:", err);
     return null;
+  }
+}
+export async function fetchAllFeatured(): Promise<Omit<FeaturedItem, "href">[]> {
+  try {
+    const url =
+      `${API_BASE}/collections/easc_businesses/records` +
+      `?filter=(featured=true)` +
+      `&sort=-created` +
+      `&perPage=50` +
+      `&fields=id,name,slug,shortDescription,coverImage,category,badge`;
+
+    console.log(url);
+
+    const res = await fetch(url, {
+      next: { revalidate: 300 },
+    });
+
+    if (!res.ok) {
+      console.error(await res.text());
+      throw new Error(`API error: ${res.status}`);
+    }
+
+    const data: FeaturedApiResponse = await res.json();
+
+    return data.items ?? [];
+  } catch (err) {
+    console.error("fetchAllFeatured error:", err);
+    return [];
   }
 }

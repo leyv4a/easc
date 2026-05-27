@@ -86,6 +86,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
   };
 }
+
 export default async function HospedajeDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const hospedaje = await fetchHospedajeBySlug(slug);

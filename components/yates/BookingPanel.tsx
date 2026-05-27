@@ -14,22 +14,22 @@ interface BookingPanelProps {
   yate: Yate;
 }
 
-// const EXP_ICONS: Record<string, string> = {
-//   Privado: "🛥️",
-//   Sunset: "🌅",
-//   Pesca: "🎣",
-//   Snorkel: "🤿",
-//   Fiesta: "🎉",
-//   Romántico: "💫",
-// };
 const EXP_ICONS: Record<string, string> = {
-  Privado: "◆",
-  Sunset: "◆",
-  Pesca: "◆",
-  Snorkel: "◆",
-  Fiesta: "◆",
-  Romántico: "◆",
+  Privado: "🛥️",
+  Sunset: "🌅",
+  Pesca: "🎣",
+  Snorkel: "🤿",
+  Fiesta: "🎉",
+  Romántico: "💫",
 };
+// const EXP_ICONS: Record<string, string> = {
+//   Privado: "◆",
+//   Sunset: "◆",
+//   Pesca: "◆",
+//   Snorkel: "◆",
+//   Fiesta: "◆",
+//   Romántico: "◆",
+// };
 
 // ◆
 // Genera slots de hora cada 30 min para las 24h

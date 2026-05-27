@@ -48,14 +48,14 @@ export default function TourContactPanel({ tour }: TourContactPanelProps) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const waMessage = encodeURIComponent(
-    `Hola! Me interesa el tour *${tour.name}* ◆\n\n` +
-    (date ? `◆" Fecha: ${format(date, "EEEE d 'de' MMMM yyyy", { locale: es })}\n` : "") +
-    (timeSlot ? `◆" Hora: ${timeSlot}\n` : "") +
-    `👥 Personas: ${people}\n` +
-    (total ? `◆" Total estimado: $${total.toLocaleString("es-MX")} ${tour.currency}\n` : "") +
-    `\n¿Cuál es la disponibilidad?`
-  );
+const waMessage = encodeURIComponent(
+  `👋 ¡Hola! Me interesa el tour *${tour.name}*\n\n` +
+  (date ? `📅 Fecha: ${format(date, "EEEE d 'de' MMMM yyyy", { locale: es })}\n` : "") +
+  (timeSlot ? `⏰ Hora: ${timeSlot}\n` : "") +
+  `👥 Personas: ${people}\n` +
+  (total ? `💰 Total estimado: $${total.toLocaleString("es-MX")} ${tour.currency}\n` : "") +
+  `\n¿Cuál es la disponibilidad? 🤔`
+);
 
   const waUrl = `https://wa.me/${tour.whatsapp.replace(/\D/g, "")}?text=${waMessage}`;
 
