@@ -26,40 +26,94 @@ export default function YateGallery({ yate }: GalleryProps) {
   const next = () =>
     setLightbox((i) => (i === null ? null : (i + 1) % urls.length));
 
+  const Thumb = ({ url, index }: { url: string; index: number }) => (
+    <div
+      onClick={() => setLightbox(index)}
+      className="relative overflow-hidden rounded-xl cursor-pointer group"
+    >
+      <div
+        className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+        style={{ backgroundImage: `url('${url}')` }}
+      />
+      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+          <ZoomIn size={18} className="text-white" />
+        </div>
+      </div>
+      {index === 4 && urls.length > 5 && (
+        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+          <span className="text-white font-playfair text-2xl">+{urls.length - 5}</span>
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <>
-      {/* Grid layout */}
-      <div className={`grid gap-3 ${urls.length >= 3 ? "grid-cols-4 grid-rows-2" : "grid-cols-2"}`}>
-        {urls.slice(0, 5).map((url, i) => {
-          const isMain = i === 0;
-          return (
+      {/* Mobile: imagen principal full-ancho + 2 miniaturas abajo */}
+      <div className="grid grid-cols-2 gap-2 sm:hidden">
+        {urls[0] && (
+          <div
+            onClick={() => setLightbox(0)}
+            className="col-span-2 relative overflow-hidden rounded-xl cursor-pointer group"
+            style={{ aspectRatio: "16 / 9" }}
+          >
             <div
-              key={url}
-              onClick={() => setLightbox(i)}
-              className={`relative overflow-hidden rounded-2xl cursor-pointer group ${
-                isMain ? "col-span-2 row-span-2" : "col-span-1 row-span-1"
-              }`}
-              style={{ aspectRatio: isMain ? "auto" : "1 / 1", minHeight: isMain ? "400px" : "auto" }}
-            >
-              <div
-                className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
-                style={{ backgroundImage: `url('${url}')` }}
-              />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                  <ZoomIn size={18} className="text-white" />
-                </div>
+              className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+              style={{ backgroundImage: `url('${urls[0]}')` }}
+            />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+          </div>
+        )}
+        {urls.slice(1, 3).map((url, i) => (
+          <div
+            key={url}
+            onClick={() => setLightbox(i + 1)}
+            className="relative overflow-hidden rounded-xl cursor-pointer group"
+            style={{ aspectRatio: "1 / 1" }}
+          >
+            <div
+              className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+              style={{ backgroundImage: `url('${url}')` }}
+            />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+            {i === 1 && urls.length > 3 && (
+              <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                <span className="text-white font-playfair text-2xl">+{urls.length - 3}</span>
               </div>
-              {/* Show more overlay on last visible image if there are more */}
-              {i === 4 && urls.length > 5 && (
-                <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                  <span className="text-white font-playfair text-2xl">+{urls.length - 5}</span>
-                </div>
-              )}
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop: imagen principal izquierda + grid 2x2 derecha */}
+      <div className="hidden sm:grid grid-cols-2 gap-3" style={{ height: "480px" }}>
+        {/* Izquierda: imagen principal */}
+        {urls[0] && (
+          <div
+            onClick={() => setLightbox(0)}
+            className="relative overflow-hidden rounded-2xl cursor-pointer group"
+          >
+            <div
+              className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+              style={{ backgroundImage: `url('${urls[0]}')` }}
+            />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                <ZoomIn size={18} className="text-white" />
+              </div>
             </div>
-          );
-        })}
+          </div>
+        )}
+
+        {/* Derecha: grid 2x2 */}
+        <div className="grid grid-cols-2 grid-rows-2 gap-3">
+          {urls.slice(1, 5).map((url, i) => (
+            <Thumb key={url} url={url} index={i + 1} />
+          ))}
+        </div>
       </div>
 
       {/* Lightbox */}
@@ -78,12 +132,9 @@ export default function YateGallery({ yate }: GalleryProps) {
             >
               <X size={20} />
             </button>
-
-            {/* Counter */}
             <div className="absolute top-5 left-5 text-white/50 text-sm">
               {lightbox + 1} / {urls.length}
             </div>
-
             {urls.length > 1 && (
               <>
                 <button
@@ -100,7 +151,6 @@ export default function YateGallery({ yate }: GalleryProps) {
                 </button>
               </>
             )}
-
             <motion.img
               key={lightbox}
               src={urls[lightbox]}
