@@ -24,6 +24,7 @@ export interface Tour {
   price: number;               // 0 = precio a consultar
   currency: string;
   durationHours: number;
+  minPeople?: number;
   maxPeople: number;
   departureLocation: string;
   address: string;
