@@ -17,7 +17,9 @@ export async function generateStaticParams() {
   return tours.map((t) => ({ slug: t.slug }));
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const tour = await fetchTourBySlug(slug);
   if (!tour) return { title: "Tour no encontrado" };
@@ -29,13 +31,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: tour.seoTitle || `${tour.name} · San Carlos`,
     description: tour.seoDescription || tour.shortDescription,
-     alternates: {
-    canonical: `https://escapateasancarlos.com/tours/${tour.slug}`,
-  },
+    alternates: {
+      canonical: `https://escapateasancarlos.com/tours/${tour.slug}`,
+    },
     openGraph: {
       title: tour.seoTitle || tour.name,
       description: tour.seoDescription || tour.shortDescription,
-      images: imageUrl ? [{ url: imageUrl, width: 1200, height: 630, alt: tour.name }] : [],
+      images: imageUrl
+        ? [{ url: imageUrl, width: 1200, height: 630, alt: tour.name }]
+        : [],
       type: "website",
       locale: "es_MX",
     },
@@ -57,8 +61,12 @@ async function ToursList() {
         <div className="w-16 h-16 rounded-full bg-[#00AEEF]/10 flex items-center justify-center mx-auto mb-4">
           <Map size={28} className="text-[#00AEEF]" />
         </div>
-        <p className="text-[#0B1E2D]/40 text-lg font-playfair">Tours próximamente disponibles</p>
-        <p className="text-[#0B1E2D]/30 text-sm mt-2">Estamos preparando experiencias increíbles para ti.</p>
+        <p className="text-[#0B1E2D]/40 text-lg font-playfair">
+          Tours próximamente disponibles
+        </p>
+        <p className="text-[#0B1E2D]/30 text-sm mt-2">
+          Estamos preparando experiencias increíbles para ti.
+        </p>
       </div>
     );
   }
@@ -75,7 +83,6 @@ async function ToursList() {
 export default function ToursPage() {
   return (
     <main className="min-h-screen bg-[#F8F5F0]">
-
       {/* ── Hero ── */}
       <section className="relative h-[65vh] min-h-[480px] flex items-end pb-16 overflow-hidden">
         <div
@@ -101,7 +108,8 @@ export default function ToursPage() {
             Tours
           </h1>
           <p className="text-white/60 text-lg max-w-xl leading-relaxed">
-            Explora San Carlos con guías expertos. Senderismo, ecoturismo y aventuras únicas en el Pueblo Mágico.
+            Explora San Carlos con guías expertos. Senderismo, ecoturismo y
+            aventuras únicas en el Pueblo Mágico.
           </p>
         </Container>
       </section>

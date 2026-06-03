@@ -1,6 +1,15 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { MapPin, Users, ArrowLeft, CheckCircle, Star, BedDouble, Bath, Waves } from "lucide-react";
+import {
+  MapPin,
+  Users,
+  ArrowLeft,
+  CheckCircle,
+  Star,
+  BedDouble,
+  Bath,
+  Waves,
+} from "lucide-react";
 import Container from "@/components/ui/Container";
 import HospedajeGallery from "@/components/hospedaje/HospedajeGallery";
 import HospedajeBookingPanel from "@/components/hospedaje/HospedajeBookingPanel";
@@ -15,16 +24,20 @@ interface PageProps {
 
 // ── Helpers (mismo patrón que HospedajeCard) ────────────────────────────────
 
-const BOOLEAN_AMENITIES: { key: keyof Hospedaje["details"]; emoji: string; label: string }[] = [
-  { key: "airConditioning",  emoji: "❄️",  label: "Aire acondicionado" },
-  { key: "kitchenIncluded",  emoji: "🍳",  label: "Cocina incluida"    },
-  { key: "wifiIncluded",     emoji: "📶",  label: "WiFi"               },
-  { key: "poolIncluded",     emoji: "🏊",  label: "Piscina"            },
-  { key: "bbqIncluded",      emoji: "🔥",  label: "Área BBQ"           },
-  { key: "petFriendly",      emoji: "🐾",  label: "Pet friendly"       },
-  { key: "bathroom",         emoji: "🚿",  label: "Baño privado"       },
-  { key: "soundSystem",      emoji: "🔊",  label: "Sistema de sonido"  },
-  { key: "kayakIncluded",    emoji: "🛶",  label: "Kayak incluido"     },
+const BOOLEAN_AMENITIES: {
+  key: keyof Hospedaje["details"];
+  emoji: string;
+  label: string;
+}[] = [
+  { key: "airConditioning", emoji: "❄️", label: "Aire acondicionado" },
+  { key: "kitchenIncluded", emoji: "🍳", label: "Cocina incluida" },
+  { key: "wifiIncluded", emoji: "📶", label: "WiFi" },
+  { key: "poolIncluded", emoji: "🏊", label: "Piscina" },
+  { key: "bbqIncluded", emoji: "🔥", label: "Área BBQ" },
+  { key: "petFriendly", emoji: "🐾", label: "Pet friendly" },
+  { key: "bathroom", emoji: "🚿", label: "Baño privado" },
+  { key: "soundSystem", emoji: "🔊", label: "Sistema de sonido" },
+  { key: "kayakIncluded", emoji: "🛶", label: "Kayak incluido" },
 ];
 
 function getActiveAmenities(details: Hospedaje["details"]) {
@@ -32,25 +45,28 @@ function getActiveAmenities(details: Hospedaje["details"]) {
 }
 
 const PRICING_LABELS: Record<string, string> = {
-  "1_day":    "1 día",
-  "2_days":   "2 días",
-  "3_days":   "3 días",
-  "4_days":   "4 días",
-  "5_days":   "5 días",
-  "6_days":   "6 días",
-  "7_days":   "7 días",
-  "extra_day": "Día extra",
+  "1_day": "1 día",
+  "2_days": "2 días",
+  "3_days": "3 días",
+  "4_days": "4 días",
+  "5_days": "5 días",
+  "6_days": "6 días",
+  "7_days": "7 días",
+  extra_day: "Día extra",
   // backward compat
-  "1_night":    "1 noche",
-  "2_nights":   "2 noches",
-  "extra_night": "Noche extra",
+  "1_night": "1 noche",
+  "2_nights": "2 noches",
+  extra_night: "Noche extra",
 };
 
 function getPricingEntries(pricing?: Hospedaje["details"]["pricing"]) {
   if (!pricing) return [];
   return Object.entries(pricing)
     .filter(([, v]) => v != null && v > 0)
-    .map(([key, value]) => ({ label: PRICING_LABELS[key] ?? key, value: value as number }));
+    .map(([key, value]) => ({
+      label: PRICING_LABELS[key] ?? key,
+      value: value as number,
+    }));
 }
 
 // ── Page ────────────────────────────────────────────────────────────────────
@@ -59,22 +75,33 @@ export async function generateStaticParams() {
   const hospedajes = await fetchHospedajes();
   return hospedajes.map((h) => ({ slug: h.slug }));
 }
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const hospedaje = await fetchHospedajeBySlug(slug);
   if (!hospedaje) return { title: "Hospedaje no encontrado" };
 
   const imageUrl = hospedaje.coverImage
-    ? getHospedajeImageUrl(hospedaje.collectionId, hospedaje.id, hospedaje.coverImage)
+    ? getHospedajeImageUrl(
+        hospedaje.collectionId,
+        hospedaje.id,
+        hospedaje.coverImage,
+      )
     : null;
 
   return {
     title: hospedaje.seoTitle || `${hospedaje.name} · San Carlos`,
     description: hospedaje.seoDescription || hospedaje.shortDescription,
+    alternates: {
+      canonical: `https://escapateasancarlos.com/hospedaje/${hospedaje.slug}`,
+    },
     openGraph: {
       title: hospedaje.seoTitle || hospedaje.name,
       description: hospedaje.seoDescription || hospedaje.shortDescription,
-      images: imageUrl ? [{ url: imageUrl, width: 1200, height: 630, alt: hospedaje.name }] : [],
+      images: imageUrl
+        ? [{ url: imageUrl, width: 1200, height: 630, alt: hospedaje.name }]
+        : [],
       type: "website",
       locale: "es_MX",
     },
@@ -93,7 +120,12 @@ export default async function HospedajeDetailPage({ params }: PageProps) {
   if (!hospedaje) notFound();
 
   const coverUrl = hospedaje.coverImage
-    ? getHospedajeImageUrl(hospedaje.collectionId, hospedaje.id, hospedaje.coverImage, "1400x800")
+    ? getHospedajeImageUrl(
+        hospedaje.collectionId,
+        hospedaje.id,
+        hospedaje.coverImage,
+        "1400x800",
+      )
     : "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=1400&q=85";
 
   const pricingEntries = getPricingEntries(hospedaje.details?.pricing);
@@ -102,7 +134,6 @@ export default async function HospedajeDetailPage({ params }: PageProps) {
 
   return (
     <main className="bg-[#F4F1EC] min-h-screen ">
-
       {/* ── HERO ── */}
       <section className="relative h-[88vh] min-h-[580px] max-h-[820px] overflow-hidden">
         <div
@@ -119,7 +150,10 @@ export default async function HospedajeDetailPage({ params }: PageProps) {
               href="/hospedaje"
               className="inline-flex items-center gap-2 text-white/60 hover:text-white text-sm transition-colors group"
             >
-              <ArrowLeft size={15} className="group-hover:-translate-x-0.5 transition-transform" />
+              <ArrowLeft
+                size={15}
+                className="group-hover:-translate-x-0.5 transition-transform"
+              />
               Todos los hospedajes
             </Link>
           </Container>
@@ -158,7 +192,10 @@ export default async function HospedajeDetailPage({ params }: PageProps) {
                     <span className="w-px h-4 bg-white/20 hidden sm:block" />
                     <span className="flex items-center gap-2">
                       <BedDouble size={14} className="text-[#00AEEF]" />
-                      {hospedaje.details.rooms} {hospedaje.details.rooms === 1 ? "habitación" : "habitaciones"}
+                      {hospedaje.details.rooms}{" "}
+                      {hospedaje.details.rooms === 1
+                        ? "habitación"
+                        : "habitaciones"}
                     </span>
                   </>
                 )}
@@ -167,7 +204,8 @@ export default async function HospedajeDetailPage({ params }: PageProps) {
                     <span className="w-px h-4 bg-white/20 hidden sm:block" />
                     <span className="flex items-center gap-2">
                       <Bath size={14} className="text-[#00AEEF]" />
-                      {hospedaje.details.bathrooms} {hospedaje.details.bathrooms === 1 ? "baño" : "baños"}
+                      {hospedaje.details.bathrooms}{" "}
+                      {hospedaje.details.bathrooms === 1 ? "baño" : "baños"}
                     </span>
                   </>
                 )}
@@ -176,7 +214,10 @@ export default async function HospedajeDetailPage({ params }: PageProps) {
                     <span className="w-px h-4 bg-white/20 hidden sm:block" />
                     <span className="flex items-center gap-2">
                       <Waves size={14} className="text-[#00AEEF]" />
-                      {distancia < 1000 ? `${distancia}m` : `${(distancia / 1000).toFixed(1)}km`} de la playa
+                      {distancia < 1000
+                        ? `${distancia}m`
+                        : `${(distancia / 1000).toFixed(1)}km`}{" "}
+                      de la playa
                     </span>
                   </>
                 )}
@@ -205,17 +246,17 @@ export default async function HospedajeDetailPage({ params }: PageProps) {
           <p className="font-playfair text-4xl text-white leading-none">
             ${hospedaje.price.toLocaleString("es-MX")}
           </p>
-          <p className="text-white/40 text-xs mt-1">{hospedaje.currency} / día</p>
+          <p className="text-white/40 text-xs mt-1">
+            {hospedaje.currency} / día
+          </p>
         </div>
       </section>
 
       {/* ── CONTENT ── */}
       <Container className="py-14">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 xl:gap-16">
-
           {/* ── LEFT 3/5 ── */}
           <div className="lg:col-span-3 space-y-8">
-
             <HospedajeGallery hospedaje={hospedaje} />
 
             {/* Description */}
@@ -264,10 +305,14 @@ export default async function HospedajeDetailPage({ params }: PageProps) {
                         i === 0 ? "bg-[#0B1E2D]" : "bg-[#F4F1EC]"
                       }`}
                     >
-                      <p className={`font-playfair text-2xl mb-1 ${i === 0 ? "text-white" : "text-[#0B1E2D]"}`}>
+                      <p
+                        className={`font-playfair text-2xl mb-1 ${i === 0 ? "text-white" : "text-[#0B1E2D]"}`}
+                      >
                         ${value.toLocaleString("es-MX")}
                       </p>
-                      <p className={`text-xs ${i === 0 ? "text-white/40" : "text-[#0B1E2D]/40"}`}>
+                      <p
+                        className={`text-xs ${i === 0 ? "text-white/40" : "text-[#0B1E2D]/40"}`}
+                      >
                         {label}
                       </p>
                     </div>
@@ -277,7 +322,10 @@ export default async function HospedajeDetailPage({ params }: PageProps) {
             )}
 
             {/* Detalles del alojamiento */}
-            {(hospedaje.details?.rooms || hospedaje.details?.bathrooms || hospedaje.maxPeople || distancia) && (
+            {(hospedaje.details?.rooms ||
+              hospedaje.details?.bathrooms ||
+              hospedaje.maxPeople ||
+              distancia) && (
               <div className="bg-white rounded-[1.75rem] p-8 shadow-sm border border-[#D8C3A5]/20">
                 <p className="text-[#00AEEF] text-[10px] tracking-[0.3em] uppercase font-semibold mb-5">
                   Detalles del alojamiento
@@ -287,8 +335,14 @@ export default async function HospedajeDetailPage({ params }: PageProps) {
                     <div className="flex flex-col items-center text-center gap-2 p-4 bg-[#F4F1EC] rounded-2xl">
                       <BedDouble size={22} className="text-[#00AEEF]" />
                       <div>
-                        <p className="font-semibold text-[#0B1E2D] text-sm">{hospedaje.details.rooms}</p>
-                        <p className="text-[#0B1E2D]/40 text-[10px]">{hospedaje.details.rooms === 1 ? "Habitación" : "Habitaciones"}</p>
+                        <p className="font-semibold text-[#0B1E2D] text-sm">
+                          {hospedaje.details.rooms}
+                        </p>
+                        <p className="text-[#0B1E2D]/40 text-[10px]">
+                          {hospedaje.details.rooms === 1
+                            ? "Habitación"
+                            : "Habitaciones"}
+                        </p>
                       </div>
                     </div>
                   )}
@@ -296,8 +350,12 @@ export default async function HospedajeDetailPage({ params }: PageProps) {
                     <div className="flex flex-col items-center text-center gap-2 p-4 bg-[#F4F1EC] rounded-2xl">
                       <Bath size={22} className="text-[#00AEEF]" />
                       <div>
-                        <p className="font-semibold text-[#0B1E2D] text-sm">{hospedaje.details.bathrooms}</p>
-                        <p className="text-[#0B1E2D]/40 text-[10px]">{hospedaje.details.bathrooms === 1 ? "Baño" : "Baños"}</p>
+                        <p className="font-semibold text-[#0B1E2D] text-sm">
+                          {hospedaje.details.bathrooms}
+                        </p>
+                        <p className="text-[#0B1E2D]/40 text-[10px]">
+                          {hospedaje.details.bathrooms === 1 ? "Baño" : "Baños"}
+                        </p>
                       </div>
                     </div>
                   )}
@@ -305,8 +363,12 @@ export default async function HospedajeDetailPage({ params }: PageProps) {
                     <div className="flex flex-col items-center text-center gap-2 p-4 bg-[#F4F1EC] rounded-2xl">
                       <Users size={22} className="text-[#00AEEF]" />
                       <div>
-                        <p className="font-semibold text-[#0B1E2D] text-sm">{hospedaje.maxPeople}</p>
-                        <p className="text-[#0B1E2D]/40 text-[10px]">Huéspedes máx.</p>
+                        <p className="font-semibold text-[#0B1E2D] text-sm">
+                          {hospedaje.maxPeople}
+                        </p>
+                        <p className="text-[#0B1E2D]/40 text-[10px]">
+                          Huéspedes máx.
+                        </p>
                       </div>
                     </div>
                   )}
@@ -315,9 +377,13 @@ export default async function HospedajeDetailPage({ params }: PageProps) {
                       <Waves size={22} className="text-[#00AEEF]" />
                       <div>
                         <p className="font-semibold text-[#0B1E2D] text-sm">
-                          {distancia < 1000 ? `${distancia}m` : `${(distancia / 1000).toFixed(1)}km`}
+                          {distancia < 1000
+                            ? `${distancia}m`
+                            : `${(distancia / 1000).toFixed(1)}km`}
                         </p>
-                        <p className="text-[#0B1E2D]/40 text-[10px]">De la playa</p>
+                        <p className="text-[#0B1E2D]/40 text-[10px]">
+                          De la playa
+                        </p>
                       </div>
                     </div>
                   )}
@@ -338,8 +404,12 @@ export default async function HospedajeDetailPage({ params }: PageProps) {
         <Container>
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
             <div>
-              <p className="font-playfair text-2xl text-white mb-1">¿Te interesa este hospedaje?</p>
-              <p className="text-white/40 text-sm">También puedes explorar más opciones de alojamiento.</p>
+              <p className="font-playfair text-2xl text-white mb-1">
+                ¿Te interesa este hospedaje?
+              </p>
+              <p className="text-white/40 text-sm">
+                También puedes explorar más opciones de alojamiento.
+              </p>
             </div>
             <div className="flex items-center gap-3">
               <Link

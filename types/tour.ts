@@ -53,7 +53,7 @@ export interface ToursApiResponse {
   totalPages: number;
 }
 
-export const TOUR_CATEGORY_ID = "ksux7zqj5ezlxby"; // ajusta al ID real de la colección
+export const TOUR_CATEGORY_ID = "ksux7zqj5ezlxby"; 
 
 export function getTourImageUrl(
   collectionId: string,
