@@ -12,6 +12,11 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
+export async function generateStaticParams() {
+  const tours = await fetchTours();
+  return tours.map((t) => ({ slug: t.slug }));
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const tour = await fetchTourBySlug(slug);
