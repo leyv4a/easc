@@ -17,13 +17,38 @@ export async function generateStaticParams() {
   return tours.map((t) => ({ slug: t.slug }));
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const tour = await fetchTourBySlug(slug);
   if (!tour) return { title: "Tour no encontrado" };
+
+  const imageUrl = tour.coverImage
+    ? getTourImageUrl(tour.collectionId, tour.id, tour.coverImage)
+    : null;
+
   return {
     title: tour.seoTitle || `${tour.name} · San Carlos`,
     description: tour.seoDescription || tour.shortDescription,
+    alternates: {
+      canonical: `https://escapateasancarlos.com/tours/${tour.slug}`,
+    },
+    openGraph: {
+      title: tour.seoTitle || tour.name,
+      description: tour.seoDescription || tour.shortDescription,
+      images: imageUrl
+        ? [{ url: imageUrl, width: 1200, height: 630, alt: tour.name }]
+        : [],
+      type: "website",
+      locale: "es_MX",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: tour.seoTitle || tour.name,
+      description: tour.seoDescription || tour.shortDescription,
+      images: imageUrl ? [imageUrl] : [],
+    },
   };
 }
 

@@ -4,53 +4,13 @@ import Container from "@/components/ui/Container";
 import SectionTitle from "@/components/ui/SectionTitle";
 import TourCard from "@/components/tours/TourCard";
 import ToursLoader from "@/components/tours/ToursLoader";
-import { fetchTourBySlug, fetchTours } from "@/lib/api";
-import type { Metadata } from "next";
-import { getTourImageUrl } from "@/types/tour";
+import { fetchTours } from "@/lib/api";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateStaticParams() {
-  const tours = await fetchTours();
-  return tours.map((t) => ({ slug: t.slug }));
-}
 
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const tour = await fetchTourBySlug(slug);
-  if (!tour) return { title: "Tour no encontrado" };
-
-  const imageUrl = tour.coverImage
-    ? getTourImageUrl(tour.collectionId, tour.id, tour.coverImage)
-    : null;
-
-  return {
-    title: tour.seoTitle || `${tour.name} · San Carlos`,
-    description: tour.seoDescription || tour.shortDescription,
-    alternates: {
-      canonical: `https://escapateasancarlos.com/tours/${tour.slug}`,
-    },
-    openGraph: {
-      title: tour.seoTitle || tour.name,
-      description: tour.seoDescription || tour.shortDescription,
-      images: imageUrl
-        ? [{ url: imageUrl, width: 1200, height: 630, alt: tour.name }]
-        : [],
-      type: "website",
-      locale: "es_MX",
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: tour.seoTitle || tour.name,
-      description: tour.seoDescription || tour.shortDescription,
-      images: imageUrl ? [imageUrl] : [],
-    },
-  };
-}
 
 async function ToursList() {
   const tours = await fetchTours();
