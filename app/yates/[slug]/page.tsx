@@ -7,6 +7,7 @@ import BookingPanel from "@/components/yates/BookingPanel";
 import { fetchYateBySlug, fetchYates } from "@/lib/api";
 import { getImageUrl } from "@/types/yate";
 import Link from "next/link";
+import { getTourImageUrl } from "@/types/tour";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -23,7 +24,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!yate) return { title: "Yate no encontrado" };
 
   const imageUrl = yate.coverImage
-    ? getImageUrl(yate.collectionId, yate.id, yate.coverImage)
+    ? getTourImageUrl(yate.collectionId, yate.id, yate.coverImage)
     : null;
 
   return {
