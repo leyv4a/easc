@@ -4,13 +4,41 @@ import Container from "@/components/ui/Container";
 import SectionTitle from "@/components/ui/SectionTitle";
 import TourCard from "@/components/tours/TourCard";
 import ToursLoader from "@/components/tours/ToursLoader";
-import { fetchTours } from "@/lib/api";
+import { fetchTourBySlug, fetchTours } from "@/lib/api";
 import type { Metadata } from "next";
+import { getTourImageUrl } from "@/types/tour";
 
-export const metadata: Metadata = {
-  title: "Tours en San Carlos Sonora — Experiencias y Aventuras",
-  description: "Descubre los mejores tours y actividades en San Carlos, Sonora. Senderismo, ecoturismo, aventura y más en el Pueblo Mágico del Mar de Cortés.",
-};
+interface PageProps {
+  params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const tour = await fetchTourBySlug(slug);
+  if (!tour) return { title: "Tour no encontrado" };
+
+  const imageUrl = tour.coverImage
+    ? getTourImageUrl(tour.collectionId, tour.id, tour.coverImage)
+    : null;
+
+  return {
+    title: tour.seoTitle || `${tour.name} · San Carlos`,
+    description: tour.seoDescription || tour.shortDescription,
+    openGraph: {
+      title: tour.seoTitle || tour.name,
+      description: tour.seoDescription || tour.shortDescription,
+      images: imageUrl ? [{ url: imageUrl, width: 1200, height: 630, alt: tour.name }] : [],
+      type: "website",
+      locale: "es_MX",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: tour.seoTitle || tour.name,
+      description: tour.seoDescription || tour.shortDescription,
+      images: imageUrl ? [imageUrl] : [],
+    },
+  };
+}
 
 async function ToursList() {
   const tours = await fetchTours();
