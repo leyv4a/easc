@@ -29,6 +29,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: tour.seoTitle || `${tour.name} · San Carlos`,
     description: tour.seoDescription || tour.shortDescription,
+     alternates: {
+    canonical: `https://escapateasancarlos.com/tours/${tour.slug}`,
+  },
     openGraph: {
       title: tour.seoTitle || tour.name,
       description: tour.seoDescription || tour.shortDescription,
